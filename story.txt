@@ -2,9 +2,7 @@ Adam wakes up in the morning.
 He brushes his teeth.
 He takes a bath.
 He has breakfast.
-<<<<<<< HEAD
 Then he watched YouTube
-=======
 Then he checked Instagram.
 He goes to class.
 He walks into the class.
@@ -14,4 +12,3 @@ His crush sees him.
 They say hi to him.
 Adam faints from a heart attack.
 Bro get send to the hospital.
->>>>>>> at-the-class
