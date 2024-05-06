@@ -1,0 +1,66 @@
+h1 {
+    font-size: 70px;
+}
+
+body {
+    
+    font-family: Arial, sans-serif;
+    background-image: linear-gradient(to right ,white, grey);
+    margin: 0; 
+    padding: 0; 
+}
+
+.container {
+    position: relative; 
+    text-align: center;
+    margin-top: 50px;
+    min-height: 100vh; 
+}
+
+
+
+button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    right: 10px;
+    padding: 0px 10px;
+    border-radius: 40px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.note-box {
+    position: relative;
+    display: inline-block;
+    width: calc(30% - 20px);
+    margin: 20px 10px;
+    background-image: linear-gradient(to right, grey, white);
+    padding: 15px;
+    border-radius: 30px;
+    box-sizing: border-box;
+    word-wrap: break-word;
+        
+    
+}
+
+.delete-btn {
+    position: absolute;
+    top: 5px;
+    right: 7px;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 5px;
+    border-radius: 60%;
+    cursor: pointer;
+    font-size: 5px;
+}
+
+.add-note-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 8px;
+    font-size: 20px; 
+    padding: 10px 20px; 
+}
