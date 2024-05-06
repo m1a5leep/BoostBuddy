@@ -7,7 +7,7 @@ notes = []
 
 @app.route('/')
 def index():
-    return render_template('index.html', notes=notes)
+    return render_template('notes.html', notes=notes)
 
 @app.route('/add_note', methods=['POST'])
 def add_note():
