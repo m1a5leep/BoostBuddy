@@ -1,0 +1,86 @@
+header{
+    padding: 20px;
+    text-align: center;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+  
+li {
+    float: left;
+}
+  
+li a {
+    display: block;
+    color: rgb(0, 0, 0);
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+h1 {
+    font-size: 65px;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: bold;
+    background-image: linear-gradient(to right ,white, grey);
+    min-height:100vh;
+}
+
+.topnav a {
+    float: left;
+    display: block;
+    color: #ff0202;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+.nav {
+    border-style: none;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-weight: 100;
+    font-size: 45px;
+    padding: 25px 120px;
+    background-image: linear-gradient(to right, grey, white);
+    border-radius: 55px;
+    margin: 36px 5px;
+    cursor: pointer;
+}
+
+.nav:hover {
+    box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+    cursor: pointer;
+}
+
+.column {
+    float: left;
+    padding: 10px;
+}
+
+.column.main {
+    width: 55%;
+}
+
+.column.side {
+    width: 30%;
+}
+
+.row::after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+@media screen and (max-width: 600px) {
+    .column.side, .column.main {
+        width: 100%;
+    }
+}
