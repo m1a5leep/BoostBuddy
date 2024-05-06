@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">                       
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Notes</h1>
+
+        
+        <form id="add-note-form" action="{{ url_for('add_note') }}" method="POST" style="display: none;">
+            <textarea name="note" id="new-note-input" rows="5" cols="50" placeholder="Write your note here..."></textarea>
+            <br>
+            <button type="submit">Add Note</button>
+        </form>
+
+        
+        <div id="notes-container">
+            {% for note in notes %}
+                <div class="note-box">
+                    <span>{{ note }}</span>
+                    <form action="{{ url_for('delete_note', note_index=loop.index0) }}" method="POST">
+                        <button type="submit" class="delete-btn">&#10006;</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+
+       
+        <button id="add-note-btn" class="add-note-btn">+</button>
+    </div>
+    
+    
+    <script>
+        
+        document.getElementById('add-note-btn').addEventListener('click', function() {
+            document.getElementById('add-note-form').style.display = 'block';
+        });
+    </script>
+</body>
+</html>
