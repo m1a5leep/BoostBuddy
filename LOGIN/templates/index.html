@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Boost Buddy Login Form</title>
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" type="style/css" href="{{ url_for('static', filename='login.css')}}">
+</head>
+<body>
+    <div class="wrapper">
+        <form action="#">
+            <h2>Welcome to Boost Buddy</h2>
+            <div class="login-container">
+                <input type="text" required>
+                <label>Enter your username</label>
+            </div>
+            <div class="login-container">
+                <input type="password" required>
+                <label>Enter your password</label>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+</body>
+</html>
