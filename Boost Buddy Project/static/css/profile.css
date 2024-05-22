@@ -5,17 +5,8 @@ body {
     padding: 0;
 }
 
-.profile-pic-container {
-    text-align: center;
-    margin-bottom: 20px;
-    margin-top: 20px;
-}
 
-.profile-pic-container img {
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-}
+
 
 h1 {
     text-align: center;

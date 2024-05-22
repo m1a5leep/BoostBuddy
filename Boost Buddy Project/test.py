@@ -1,15 +1,4 @@
-import os
 from flask import Flask, redirect, url_for, render_template, request, flash
-from werkzeug.utils import secure_filename
-
-app = Flask(__name__)
-app.secret_key = 'supersecretkey'
-app.config['UPLOAD_FOLDER'] = 'static/uploads/'
-app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'gif'}
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
-
 
 
 app = Flask(__name__)
@@ -107,15 +96,7 @@ def edit_profile():
         email = request.form['email']
         bio = request.form['bio']
 
-        if 'profile_pic' in request.files:
-            file = request.files['profile_pic']
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], 'profile_pic.jpg'))
-            else:
-                flash('Invalid file type')
-
-        # Process the form data (e.g., update user profile in the database)
+        
 
         return redirect(url_for('index'))
     return render_template('edit_profile.html')
@@ -127,14 +108,14 @@ def change_password():
         new_password = request.form['new_password']
         confirm_password = request.form['confirm_password']
         
-        # Process the form data (e.g., change user password in the database)
+       
         
         return redirect(url_for('index'))
     return render_template('change_password.html')
 
 @app.route('/logout')
 def logout():
-    # Handle the logout process
+ 
     
     return redirect(url_for('index'))
 
