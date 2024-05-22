@@ -1,0 +1,50 @@
+body {
+    font-family: Arial, sans-serif;
+    background-image: linear-gradient(to right, white, grey);
+    margin: 0;
+    padding: 0;
+}
+
+.profile-pic-container {
+    text-align: center;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.profile-pic-container img {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+}
+
+h1 {
+    text-align: center;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 400px;
+}
+
+.button-container .button {
+    margin: 10px;
+    padding: 15px;
+    font-size: 18px;
+    color: black;
+    background-image: linear-gradient(to right, white, grey);
+    border: 2px solid black;
+    border-radius: 20px;
+    text-decoration: none;
+    text-align: center;
+    cursor: pointer;
+    display: inline-block;
+    width: 200px;
+}
+
+.button-container .button:hover {
+    background-color: #0056b3;
+    color: white;
+}
