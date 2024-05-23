@@ -1,9 +1,9 @@
-header {
+header{
     padding: 20px;
     text-align: center;
 }
 
-.add {
+.add{
     border: none;
     bottom: 20px;
     right: 8px;
@@ -19,11 +19,11 @@ ul {
     padding: 0;
     overflow: hidden;
 }
-
+  
 li {
     float: left;
 }
-
+  
 li a {
     display: block;
     color: rgb(0, 0, 0);
@@ -41,7 +41,7 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-weight: bold;
     background-image: linear-gradient(to right ,white, grey);
-    min-height: 100vh;
+    min-height:100vh;
 }
 
 h2 {
@@ -56,7 +56,7 @@ h2 {
     min-height: 100vh; 
 }
 
-.notesbox {
+.taskbox {
     position: relative;
     display: inline-block;
     width: calc(30% - 20px);
@@ -85,23 +85,28 @@ h2 {
     display: flex;
 }
 
+.btn-complete {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+}
 
-
-.btn-delete{
-
+.btn-delete,
+.btn-complete {
     background: none;
     border: none;
     cursor: pointer;
 }
-
-.btn-delete:hover{
-
+.btn-delete:hover,
+.btn-complete:hover {
     color: rgb(249, 255, 144);
 }
 
+
 input[type="text"],
 textarea,
-
+input[type="date"],
 input[type="submit"],
 input[type="cancel"] {
     width: 100%;
@@ -131,6 +136,3 @@ input[type="cancel"]:hover {
         width: 100%;
     }
 }
-
-
-
