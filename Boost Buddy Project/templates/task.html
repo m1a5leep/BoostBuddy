@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Task Page</title>
-    <link rel="stylesheet" href="{{url_for('static', filename='css/task.css')}}">
-    <title>Task</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/task.css') }}">
 </head>
 <body>
     <header>
@@ -22,23 +21,35 @@
             </ul>
         </nav>
     </header>
+
     <h2>Tasks</h2>
+
     <div class="box">
         {% for task in tasks %}
             <div class="taskbox">
                 <span>
-                    <strong>{{ task.name }}</strong><br>
-                    Description: {{ task.description }}<br>
-                    Due Date: {{ task.due_date }}
+                    <article>
+                        <div class="taskbody">
+                            <div class="taskdetails">
+                                <small class="time">{{ task.task_date.strftime('%Y-%m-%d %H:%M') }}</small>
+                            </div>
+                            <a class="taskname">{{ task.task_name }}</a>
+                            <p class="taskdes">{{ task.task_description }}</p>
+                            {% if task.completion_time %}
+                                <p class="time-spent">Time Spent: 
+                                    {{ (task.completion_time - task.task_date).total_seconds() // 3600 }} hours 
+                                    {{ ((task.completion_time - task.task_date).total_seconds() % 3600) // 60 }} minutes
+                                </p>
+                            {% endif %}
+                        </div>
+                    </article>
                     <div>
-                        <form action="{{ url_for('delete_task', task_index=loop.index0) }}" method="post" class="delete-form">
-                            <input type="hidden" name="task_index" value="{{ task_index }}">
+                        <form action="{{ url_for('delete_task', task_id=task.id) }}" method="post" class="delete-form">
                             <button type="submit" class="btn-delete">
                                 <?xml version="1.0" encoding="UTF-8"?><svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" color="#000000"><path d="M6.75827 17.2426L12.0009 12M17.2435 6.75736L12.0009 12M12.0009 12L6.75827 6.75736M12.0009 12L17.2435 17.2426" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
                             </button>
                         </form>
-                        <form action="/complete_task/{{ task_index }}" method="post" class="complete-form">
-                            <input type="hidden" name="task_index" value="{{ task_index }}">
+                        <form action="{{ url_for('complete_task', task_id=task.id) }}" method="post" class="complete-form">
                             <button type="submit" class="btn-complete">
                                 <?xml version="1.0" encoding="UTF-8"?><svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" color="#000000"><path d="M5 13L9 17L19 7" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
                             </button>
@@ -47,7 +58,8 @@
                 </span>
             </div>
         {% endfor %}
-        </div>
+    </div>
+
     <a href="{{ url_for('addtask') }}"><button class="add">+</button></a>
 </body>
 </html>
