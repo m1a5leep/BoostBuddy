@@ -1,5 +1,5 @@
 header {
-    padding: 20px;
+    padding: 00px;
     text-align: center;
 }
 
@@ -33,7 +33,11 @@ li a {
 }
 
 h1 {
-    font-size: 65px;
+    font-size: 80px;
+    text-align: center;
+    margin-top: 00px; 
+    margin-bottom: 50px; 
+    
 }
 
 body {
@@ -45,8 +49,10 @@ body {
 }
 
 h2 {
-    font-size: 50px;
+    font-size: 65px;
     text-align: center;
+    margin-top: 10px; 
+    margin-bottom: 50px;
 }
 
 .box {
