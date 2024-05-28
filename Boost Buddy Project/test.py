@@ -1,10 +1,12 @@
-from flask import Flask, redirect, url_for, render_template, request, flash
+from flask import Flask, redirect, url_for, render_template, request, flash, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+import os
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+app.config['UPLOAD_FOLDER'] = 'uploads'
 
 db = SQLAlchemy(app)
 notes = []
@@ -19,6 +21,9 @@ class Task(db.Model):
 
 with app.app_context():
     db.create_all()
+
+if not os.path.exists(app.config['UPLOAD_FOLDER']):
+    os.makedirs(app.config['UPLOAD_FOLDER'])
 
 @app.route('/')
 def index():
@@ -84,6 +89,41 @@ def delete_note(note_index):
 @app.route('/calendar')
 def calendar():
     return render_template('calendar.html')
+
+@app.route('/doc')
+def document():
+    files = os.listdir(app.config['UPLOAD_FOLDER'])
+    return render_template('doc.html', files=files)
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return 'No file part'
+        file = request.files['file']
+        if file.filename == '':
+            return 'No selected file'
+        if file:
+            filename = file.filename
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return redirect(url_for('upload_file'))
+    
+    files = os.listdir(app.config['UPLOAD_FOLDER'])
+    return render_template('doc.html', files=files)
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+@app.route('/delete', methods=['POST'])
+def delete_file():
+    filename = request.form['filename']
+    try:
+        os.remove(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        return redirect(url_for('uploaded_files'))
+    except OSError:
+        return redirect(url_for('uploaded_files'))
+
 
 if __name__ == '__main__':
     app.run(debug=True)
