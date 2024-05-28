@@ -66,18 +66,42 @@ def addtask():
 def note():
     return render_template('notes.html', notes=notes)
 
-@app.route('/add_note', methods=['POST'])
-def add_note():
-    note = request.form.get('note')
-    if note:
-        notes.append(note)
+
+@app.route('/cancel_note', methods=['GET'])
+def cancel_note():
+   return render_template('notes.html')
+
+
+@app.route('/delete_notes/<int:notes_index>', methods=['POST'])
+def delete_notes(notes_index):
+    if request.method == 'POST':
+        if notes_index < len(notes):
+           del notes[notes_index]
+           flash('Note deleted successfully.', 'success')
     return redirect(url_for('note'))
 
-@app.route('/delete_note/<int:note_index>', methods=['POST'])
-def delete_note(note_index):
-    if note_index < len(notes):
-        del notes[note_index]
-    return redirect(url_for('note'))
+
+@app.route('/notes', methods=['GET', 'POST'])
+def create_notes():
+    if request.method == 'POST':
+        note_title = request.form['note_title']
+        note_content = request.form['note_content']
+
+        note = {
+            'title': note_title,
+            'content': note_content
+        }
+
+        notes.append(note)
+        print(note)
+
+        return redirect(url_for('note'))
+    return render_template('notes.html', notes=notes)
+
+
+@app.route('/add_note')
+def add_note():
+    return render_template('add_note.html')
 
 @app.route('/calendar')
 def calendar():
