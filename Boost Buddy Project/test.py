@@ -12,14 +12,13 @@ tasks = []
 
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    task_name = db.Column(db.string(150), nullable=False)
-    task_description = db.Column(db.text, nullable=False)
+    task_name = db.Column(db.String(150), nullable=False)
+    task_description = db.Column(db.Text, nullable=False)
     task_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    completion_time = db.Column(db.DateTime, nullable=True)
 
-    def __repr__(self):
-        return f"Task('{self.task_name}', '{self.task_description}', '{self.task_date}')"
-    
-class Task(db.Model):
+with app.app_context():
+    db.create_all()
 
 @app.route('/')
 def index():
@@ -31,46 +30,35 @@ def homepage():
 
 @app.route('/task')
 def task():
+    tasks = Task.query.all()
     return render_template('task.html', tasks=tasks)
 
-@app.route('/cancel', methods=['GET'])
-def cancel_add():
-    return render_template('task.html')
-
-@app.route('/delete_task/<int:task_index>', methods=['POST'])
-def delete_task(task_index):
-    if request.method == 'POST':
-        if task_index < len(tasks):
-            del tasks[task_index]
-            flash('Task deleted successfully.', 'success')
+@app.route('/delete_task/<int:task_id>', methods=['POST'])
+def delete_task(task_id):
+    task = Task.query.get_or_404(task_id)
+    db.session.delete(task)
+    db.session.commit()
+    flash('Task deleted successfully.', 'success')
     return redirect(url_for('task'))
 
-@app.route('/complete_task/<int:task_index>', methods=['POST'])
-def complete_task(task_index):
-    if request.method == 'POST':
-        if task_index < len(tasks):
-            tasks[task_index]['completed'] = True
-            flash('Task marked as complete.', 'success')
+@app.route('/complete_task/<int:task_id>', methods=['POST'])
+def complete_task(task_id):
+    task = Task.query.get_or_404(task_id)
+    task.completion_time = datetime.utcnow()
+    db.session.commit()
+    flash('Task marked as complete.', 'success')
     return redirect(url_for('task'))
 
-@app.route('/task', methods=['GET', 'POST'])
+@app.route('/create_task', methods=['POST'])
 def create_task():
-    if request.method == 'POST':
-        task_name = request.form['task_name']
-        task_description = request.form['task_description']
-        task_due_date = request.form['task_due_date']
-
-        task = {
-            'name': task_name,
-            'description': task_description,
-            'due_date': task_due_date
-        }
-
-        tasks.append(task)
-        print(tasks)
-
-        return redirect(url_for('task'))
-    return render_template('task.html')
+    task_name = request.form['task_name']
+    task_description = request.form['task_description']
+    task_date = request.form['task_date']
+    task_date = datetime.strptime(task_date, '%Y-%m-%dT%H:%M')
+    new_task = Task(task_name=task_name, task_description=task_description, task_date=task_date)
+    db.session.add(new_task)
+    db.session.commit()
+    return redirect(url_for('task'))
 
 @app.route('/addtask')
 def addtask():
