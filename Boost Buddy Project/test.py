@@ -17,6 +17,11 @@ class Task(db.Model):
     task_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     completion_time = db.Column(db.DateTime, nullable=True)
 
+class Note(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(100), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+
 with app.app_context():
     db.create_all()
 
@@ -64,22 +69,49 @@ def create_task():
 def addtask():
     return render_template('addtask.html')
 
-@app.route('/notes')
+@app.route('/note')
 def note():
+    notes = Note.query.all()
     return render_template('notes.html', notes=notes)
 
-@app.route('/add_note', methods=['POST'])
-def add_note():
-    note = request.form.get('note')
-    if note:
-        notes.append(note)
+
+
+@app.route('/cancel_note', methods=['GET'])
+def cancel_note():
+   return render_template('notes.html')
+
+
+
+@app.route('/delete_note/<int:note_id>', methods=['POST'])
+def delete_note(note_id):
+    note = Note.query.get_or_404(note_id)
+    db.session.delete(note)
+    db.session.commit()
+    flash('Note deleted successfully.', 'success')
     return redirect(url_for('note'))
 
-@app.route('/delete_note/<int:note_index>', methods=['POST'])
-def delete_note(note_index):
-    if note_index < len(notes):
-        del notes[note_index]
+
+
+@app.route('/notes', methods=['GET', 'POST'])
+def create_notes():
+    title = request.form['note_title']
+    content = request.form['note_content']
+    new_note = Note(title=title, content=content)
+    db.session.add(new_note)
+    db.session.commit()
+    flash('Note created successfully.', 'success')
     return redirect(url_for('note'))
+ 
+
+
+
+
+
+@app.route('/add_note')
+def add_note():
+    return render_template('add_note.html')
+
+
 
 @app.route('/calendar')
 def calendar():
