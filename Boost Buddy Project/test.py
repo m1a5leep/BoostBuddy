@@ -1,7 +1,7 @@
 from flask import Flask, redirect, url_for, render_template, request, flash, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
+import time, schedule, calendar, os
 from datetime import datetime
-import os
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -68,6 +68,7 @@ def create_task():
     new_task = Task(task_name=task_name, task_description=task_description, task_date=task_date)
     db.session.add(new_task)
     db.session.commit()
+    flash('Task created successfully.', 'success')
     return redirect(url_for('task'))
 
 @app.route('/addtask')
@@ -113,9 +114,7 @@ def add_note():
     return render_template('add_note.html')
 
 
-@app.route('/calendar')
-def calendar():
-    return render_template('calendar.html')
+
 
 @app.route('/doc')
 def document():
@@ -151,6 +150,31 @@ def delete_file():
     except OSError:
         flash('Error deleting file.', 'danger')
     return redirect(url_for('document'))
+
+@app.route('/generatecal/<int:year>/<int:month>')
+def generate_calendar(year, month):
+    cal = calendar.Calendar(firstweekday=0)
+    month_days = cal.monthdayscalendar(year, month)
+    tasks = Task.query.all()
+    tasks_by_day = {}
+
+    for task in tasks:
+        if task.task_date.year == year and task.task_date.month == month:
+            day = task.task_date.day
+            if day not in tasks_by_day:
+                tasks_by_day[day] = []
+            tasks_by_day[day].append(task)
+    
+    return month_days, tasks_by_day
+
+@app.route('/calendar')
+def calendar_view():
+    now = datetime.now()
+    year = now.year
+    month = now.month
+    month_days, tasks_by_day = generate_calendar(year, month)
+    month_name = now.strftime('%B')
+    return render_template('calendar.html', year=year, month=month, month_name=month_name, month_days=month_days, tasks_by_day=tasks_by_day)
 
 if __name__ == '__main__':
     app.run(debug=True)
