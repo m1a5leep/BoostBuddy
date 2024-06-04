@@ -41,7 +41,7 @@
                         {% if day in tasks_by_day %}
                             <ul>
                                 {% for task in tasks_by_day[day] %}
-                                    <li>{{ task.task_name }} {% if task.completion_time %}(Completed){% endif %}</li>
+                                    <li class="tasktitle">{{ task.task_name }} {% if task.completion_time %}(Completed){% endif %}</li>
                                 {% endfor %}
                             </ul>
                         {% endif %}

@@ -81,6 +81,7 @@ h2 {
 
 .taskdes {
     white-space: pre-line;
+    font-weight: normal;
 }
 
 .time {
