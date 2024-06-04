@@ -120,10 +120,10 @@ def delete_file():
     filename = request.form['filename']
     try:
         os.remove(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        return redirect(url_for('uploaded_files'))
+        flash('File deleted successfully.', 'success')
     except OSError:
-        return redirect(url_for('uploaded_files'))
-
+        flash('Error deleting file.', 'danger')
+    return redirect(url_for('document'))
 
 if __name__ == '__main__':
     app.run(debug=True)
