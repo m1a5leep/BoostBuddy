@@ -24,13 +24,13 @@
     <h1>Calendar</h1>
     <h2>{{ month_name }} {{ year }}</h2>
     <div class="calendar">
-        <div class="header">Sun</div>
-        <div class="header">Mon</div>
-        <div class="header">Tue</div>
-        <div class="header">Wed</div>
-        <div class="header">Thu</div>
-        <div class="header">Fri</div>
-        <div class="header">Sat</div>
+        <div class="datetext">Sun</div>
+        <div class="datetext">Mon</div>
+        <div class="datetext">Tue</div>
+        <div class="datetext">Wed</div>
+        <div class="datetext">Thu</div>
+        <div class="datetext">Fri</div>
+        <div class="datetext">Sat</div>
         {% for week in month_days %}
             {% for day in week %}
                 {% if day == 0 %}
