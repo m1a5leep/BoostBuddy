@@ -103,14 +103,9 @@ def create_notes():
     return redirect(url_for('note'))
  
 
-
-
-
-
 @app.route('/add_note')
 def add_note():
     return render_template('add_note.html')
-
 
 
 @app.route('/calendar')
