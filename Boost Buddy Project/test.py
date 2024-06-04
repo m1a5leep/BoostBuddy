@@ -117,5 +117,40 @@ def add_note():
 def calendar():
     return render_template('calendar.html')
 
+@app.route('/doc')
+def document():
+    files = os.listdir(app.config['UPLOAD_FOLDER'])
+    return render_template('doc.html', files=files)
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return 'No file part'
+        file = request.files['file']
+        if file.filename == '':
+            return 'No selected file'
+        if file:
+            filename = file.filename
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return redirect(url_for('upload_file'))
+    
+    files = os.listdir(app.config['UPLOAD_FOLDER'])
+    return render_template('doc.html', files=files)
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+@app.route('/delete', methods=['POST'])
+def delete_file():
+    filename = request.form['filename']
+    try:
+        os.remove(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        flash('File deleted successfully.', 'success')
+    except OSError:
+        flash('Error deleting file.', 'danger')
+    return redirect(url_for('document'))
+
 if __name__ == '__main__':
     app.run(debug=True)
