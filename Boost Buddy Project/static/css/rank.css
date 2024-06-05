@@ -1,0 +1,69 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: linear-gradient(to right, white, grey);
+}
+
+h1 {
+    font-size: 50px;
+    text-align: center;
+    margin-top: 20px; /* Adjust margin-top value */
+    margin-bottom: 50px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #868181;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2; /* Set background color for even rows to light gray */
+}
+
+tr:nth-child(odd) {
+    background-color: white; /* Set background color for odd rows to white */
+}
+
+tr:hover {
+    background-color: #e0e0e0; /* Change background color on hover */
+}
+
+.task-info {
+    display: none;
+}
+
+.task-info:target {
+    display: block;
+}
+
+.square-button {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #042d59; /* Blue background color */
+    color: white;
+    text-align: center;
+    text-decoration: none;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    color: rgb(0, 0, 0);
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
