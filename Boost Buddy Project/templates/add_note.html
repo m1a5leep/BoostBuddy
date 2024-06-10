@@ -9,7 +9,7 @@
 <body>
     <h2>Add Note</h2>
    
-    <form class="addform" action="{{ url_for('note') }}" method="POST">
+    <form class="addform" action="{{ url_for('create_notes') }}" method="POST">
         <label for="note_title">Title:</label>
         <input type="text" id="note_title" name="note_title" required>
 
@@ -17,7 +17,7 @@
         <textarea id="note_content" name="note_content" rows="4" cols="50" required></textarea>
 
         <input type="submit" value="Add Note">
-        <input type="cancel" value="Cancel" onclick="window.location.href='/notes'">
+        <input type="cancel" value="Cancel" onclick="window.location.href='/note'">
     </form>
-</body>
+   </body>
  </html>
