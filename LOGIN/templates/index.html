@@ -1,25 +1,12 @@
 <!DOCTYPE html>
-
-<html>
+<html lang="en">
 <head>
-    <title>Boost Buddy Login Form</title>
-    <link rel="stylesheet" href="login.css">
-    <link rel="stylesheet" type="style/css" href="{{ url_for('static', filename='login.css')}}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index</title>
 </head>
 <body>
-    <div class="wrapper">
-        <form action="{{ url_for('auth.login')}}">
-            <h2>Welcome to Boost Buddy</h2>
-            <div class="login-container">
-                <input type="text" name="username" required>
-                <label>Enter your username</label>
-            </div>
-            <div class="login-container">
-                <input type="password" name="password" required>
-                <label>Enter your password</label>
-            </div>
-            <button type="submit">Login</button>
-        </form>
-    </div>
+    <h2>Welcome to the Index Page</h2>
+    <p>You are logged in.</p>
 </body>
 </html>
