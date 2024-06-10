@@ -1,14 +1,24 @@
-from flask import Flask, redirect, url_for, render_template, request, flash
+from flask import Flask, redirect, url_for, render_template, request, flash, send_from_directory, Blueprint, session
 from flask_sqlalchemy import SQLAlchemy
+from werkzeug.utils import secure_filename
+import time, schedule, calendar, os
 from datetime import datetime
+from werkzeug.security import generate_password_hash, check_password_hash
+
+
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['UPLOAD_FOLDER'] = 'uploads'
+UPLOAD_FOLDER = 'uploads'
 
 db = SQLAlchemy(app)
 notes = []
 tasks = []
+
+
 
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -22,12 +32,79 @@ class Note(db.Model):
     title = db.Column(db.String(100), nullable=False)
     content = db.Column(db.Text, nullable=False)
 
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(20), nullable=False, unique=True)
+    password = db.Column(db.String(60), nullable=False)
+    bio = db.Column(db.String(100), nullable=True)  
+    email = db.Column(db.String(120), nullable=False, unique=True)  
+    phone = db.Column(db.String(15), nullable=True)  
+     
+
+    def _repr_(self):
+        return f"User('{self.username}''{self.email}''{self.phone}''{self.bio}')"
+
 with app.app_context():
     db.create_all()
 
-@app.route('/')
+auth_bp = Blueprint("auth", __name__)
+
+@auth_bp.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+
+        # checking if user already exists
+        user = User.query.filter_by(username=username).first()
+        if user:
+            flash("Username already exists! Please choose a different username.")
+            return redirect(url_for("auth.register"))
+
+        #hash cover password
+        hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
+
+        #creating new user and add to database
+        new_user = User(username=username, password=hashed_password)
+        db.session.add(new_user)
+        db.session.commit()
+
+        flash("You have registered with Boost Buddy! Please log in.")
+        return redirect(url_for("auth.login"))
+
+    return render_template("register.html")
+
+@auth_bp.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+
+        user = User.query.filter_by(username=username).first()
+
+        if user and check_password_hash(user.password, password):
+            flash("Login Successful! Welcome back!")
+            session['username'] = username
+            return render_template("homepage.html")
+        else:
+            flash("Invalid username or password! Try Again!")
+
+    return render_template("login.html")
+
+@auth_bp.route("/")
+def auth_index():
+    return render_template("login.html")
+
+app.register_blueprint(auth_bp)
+
+@app.route("/main")
 def index():
-    return render_template('homepage.html', title='Home')
+    return render_template("index.html")
+
+if not os.path.exists(app.config['UPLOAD_FOLDER']):
+    os.makedirs(app.config['UPLOAD_FOLDER'])
+
 
 @app.route('/homepage')
 def homepage():
@@ -63,6 +140,7 @@ def create_task():
     new_task = Task(task_name=task_name, task_description=task_description, task_date=task_date)
     db.session.add(new_task)
     db.session.commit()
+    flash('Task created successfully.', 'success')
     return redirect(url_for('task'))
 
 @app.route('/addtask')
@@ -102,15 +180,64 @@ def create_notes():
     flash('Note created successfully.', 'success')
     return redirect(url_for('note'))
  
+
 @app.route('/add_note')
 def add_note():
     return render_template('add_note.html')
 
 
 
-@app.route('/calendar')
-def calendar():
-    return render_template('calendar.html')
+
+@app.route('/doc')
+def document():
+    files = os.listdir(app.config['UPLOAD_FOLDER'])
+    return render_template('doc.html', files=files)
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return 'No file part'
+        file = request.files['file']
+        if file.filename == '':
+            return 'No selected file'
+        if file:
+            filename = file.filename
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return redirect(url_for('upload_file'))
+    
+    files = os.listdir(app.config['UPLOAD_FOLDER'])
+    return render_template('doc.html', files=files)
+
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+@app.route('/delete', methods=['POST'])
+def delete_file():
+    filename = request.form['filename']
+    try:
+        os.remove(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        flash('File deleted successfully.', 'success')
+    except OSError:
+        flash('Error deleting file.', 'danger')
+    return redirect(url_for('document'))
+
+@app.route('/generatecal/<int:year>/<int:month>')
+def generate_calendar(year, month):
+    cal = calendar.Calendar(firstweekday=0)
+    month_days = cal.monthdayscalendar(year, month)
+    tasks = Task.query.all()
+    tasks_by_day = {}
+
+    for task in tasks:
+        if task.task_date.year == year and task.task_date.month == month:
+            day = task.task_date.day
+            if day not in tasks_by_day:
+                tasks_by_day[day] = []
+            tasks_by_day[day].append(task)
+    
+    return month_days, tasks_by_day
 
 @app.route('/rank')
 def rank():
@@ -127,6 +254,102 @@ def rank():
 
     return render_template('rank.html', tasks=sorted_tasks)
 
+@app.route('/calendar')
+def calendar_view():
+    now = datetime.now()
+    year = now.year
+    month = now.month
+    month_days, tasks_by_day = generate_calendar(year, month)
+    month_name = now.strftime('%B')
+    return render_template('calendar.html', year=year, month=month, month_name=month_name, month_days=month_days, tasks_by_day=tasks_by_day)
+
+@app.route('/profile')
+def profile():
+    return render_template('profile.html')
+
+@app.route('/edit_profile')
+def edit_profile():
+    return render_template('edit_profile.html')
+
+@app.route('/security', methods=['GET', 'POST'])
+def security():
+    if request.method == 'POST':
+        if 'current_password' in request.form and 'new_password' in request.form and 'confirm_password' in request.form:
+            # Change password functionality
+            username = session.get('username')
+            user = User.query.filter_by(username=username).first()
+            if user:
+                if check_password_hash(user.password, request.form['current_password']):
+                    new_password = request.form['new_password']
+                    confirm_password = request.form['confirm_password']
+                    if new_password == confirm_password:
+                        new_password_hashed = generate_password_hash(new_password, method='pbkdf2:sha256')
+                        user.password = new_password_hashed
+                        db.session.commit()
+                        flash('Password changed successfully!', 'success')
+                        return redirect(url_for('auth.login'))
+                    else:
+                        flash('New password and confirm password do not match. Please try again.', 'danger')
+                else:
+                    flash('Current password is incorrect. Please try again.', 'danger')
+            else:
+                flash('User not found or not logged in. Please log in first.', 'danger')
+
+        elif 'new_username' in request.form:
+            # Change username functionality
+            new_username = request.form['new_username']
+            user = User.query.filter_by(username=session['username']).first()
+            if user:
+                user.username = new_username
+                db.session.commit()
+                session['username'] = new_username  # Update session with new username
+                flash('Username changed successfully!', 'success')
+                return redirect(url_for('auth.login'))
+            else:
+                flash('User not found or not logged in. Please log in first.', 'danger')
+                
+    return render_template('security.html')
+
+
+
+
+
+
+
+
+
+@app.route('/about_me', methods=['GET', 'POST'])
+def about_me():
+    user = User.query.filter_by(username=session.get('username')).first()
+    if not user:
+        flash('User not found or not logged in.', 'danger')
+        return redirect(url_for('auth.login'))
+
+    if request.method == 'POST':
+        user.bio = request.form['bio']
+        user.email = request.form['email']
+        user.phone = request.form['phone']
+        db.session.commit()
+        flash('Contact information updated successfully!', 'success')
+        return redirect(url_for('about_me'))
+
+    return render_template('about_me.html', user=user, edit_mode=request.args.get('edit', 'false') == 'true')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
