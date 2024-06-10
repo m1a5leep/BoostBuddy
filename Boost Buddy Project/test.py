@@ -239,6 +239,21 @@ def generate_calendar(year, month):
     
     return month_days, tasks_by_day
 
+@app.route('/rank')
+def rank():
+   
+    tasks = Task.query.all()
+
+    sorted_tasks = []
+    for task in tasks:
+        if task.completion_time is not None:
+            procrastination_level = task.completion_time - task.task_date
+            sorted_tasks.append((task, procrastination_level))
+
+    sorted_tasks.sort(key=lambda x: x[1], reverse=True)
+
+    return render_template('rank.html', tasks=sorted_tasks)
+
 @app.route('/calendar')
 def calendar_view():
     now = datetime.now()
