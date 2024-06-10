@@ -1,0 +1,27 @@
+{% extends 'profile.html' %}
+
+{% block content %}
+<link rel="stylesheet" href="{{url_for('static', filename='css/profile.css')}}">
+<div class="about-me-container">
+    <h2>About Me</h2>
+    {% if edit_mode %}
+        <form method="POST" action="{{ url_for('about_me') }}">
+            <label for="bio">Bio:</label>
+            <input type="text" id="bio" name="bio" value="{{ user.bio }}"><br>
+            <label for="email">Email:</label>
+            <input type="text" id="email" name="email" value="{{ user.email }}"><br>
+            <label for="phone">Phone:</label>
+            <input type="text" id="phone" name="phone" value="{{ user.phone }}"><br>
+            <button type="submit">Save</button>
+            <a href="{{ url_for('about_me') }}">Cancel</a>
+        </form>
+    {% else %}
+        <p>Bio: {{ user.bio }}</p>
+        <p>Email: {{ user.email }}</p>
+        <p>Phone: {{ user.phone }}</p>
+        <a href="{{ url_for('about_me', edit='true') }}">Edit About Me</a>
+    {% endif %}
+</div>
+{% endblock %}
+
+
