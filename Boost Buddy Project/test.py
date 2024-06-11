@@ -1,18 +1,14 @@
-from flask import Flask, redirect, url_for, render_template, request, flash, send_from_directory, Blueprint, session
+from flask import Flask, redirect, url_for, render_template, request, flash, send_from_directory, Blueprint
 from flask_sqlalchemy import SQLAlchemy
-from werkzeug.utils import secure_filename
 import time, schedule, calendar, os
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 
-
-
-app = Flask(__name__)
+app = Flask(name)
 app.secret_key = 'your_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = 'uploads'
-UPLOAD_FOLDER = 'uploads'
 
 db = SQLAlchemy(app)
 notes = []
@@ -37,18 +33,14 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
     password = db.Column(db.String(60), nullable=False)
-    bio = db.Column(db.String(100), nullable=True)  
-    email = db.Column(db.String(120), nullable=False, unique=True)  
-    phone = db.Column(db.String(15), nullable=True)  
-     
 
-    def _repr_(self):
-        return f"User('{self.username}''{self.email}''{self.phone}''{self.bio}')"
+    def repr(self):
+        return f"User('{self.username}')"
 
 with app.app_context():
     db.create_all()
 
-auth_bp = Blueprint("auth", __name__)
+auth_bp = Blueprint("auth", name)
 
 @auth_bp.route("/register", methods=["GET", "POST"])
 def register():
@@ -85,7 +77,6 @@ def login():
 
         if user and check_password_hash(user.password, password):
             flash("Login Successful! Welcome back!")
-            session['username'] = username
             return render_template("homepage.html")
         else:
             flash("Invalid username or password! Try Again!")
@@ -239,21 +230,6 @@ def generate_calendar(year, month):
     
     return month_days, tasks_by_day
 
-@app.route('/rank')
-def rank():
-   
-    tasks = Task.query.all()
-
-    sorted_tasks = []
-    for task in tasks:
-        if task.completion_time is not None:
-            procrastination_level = task.completion_time - task.task_date
-            sorted_tasks.append((task, procrastination_level))
-
-    sorted_tasks.sort(key=lambda x: x[1], reverse=True)
-
-    return render_template('rank.html', tasks=sorted_tasks)
-
 @app.route('/calendar')
 def calendar_view():
     now = datetime.now()
@@ -267,89 +243,38 @@ def calendar_view():
 def profile():
     return render_template('profile.html')
 
-@app.route('/edit_profile')
+
+
+@app.route('/edit_profile', methods=['GET', 'POST'])
 def edit_profile():
+    if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
+        bio = request.form['bio']
+
+        
+
+        return redirect(url_for('index'))
     return render_template('edit_profile.html')
 
-@app.route('/security', methods=['GET', 'POST'])
-def security():
+@app.route('/change_password', methods=['GET', 'POST'])
+def change_password():
     if request.method == 'POST':
-        if 'current_password' in request.form and 'new_password' in request.form and 'confirm_password' in request.form:
-            # Change password functionality
-            username = session.get('username')
-            user = User.query.filter_by(username=username).first()
-            if user:
-                if check_password_hash(user.password, request.form['current_password']):
-                    new_password = request.form['new_password']
-                    confirm_password = request.form['confirm_password']
-                    if new_password == confirm_password:
-                        new_password_hashed = generate_password_hash(new_password, method='pbkdf2:sha256')
-                        user.password = new_password_hashed
-                        db.session.commit()
-                        flash('Password changed successfully!', 'success')
-                        return redirect(url_for('auth.login'))
-                    else:
-                        flash('New password and confirm password do not match. Please try again.', 'danger')
-                else:
-                    flash('Current password is incorrect. Please try again.', 'danger')
-            else:
-                flash('User not found or not logged in. Please log in first.', 'danger')
+        old_password = request.form['old_password']
+        new_password = request.form['new_password']
+        confirm_password = request.form['confirm_password']
+        
+       
+        
+        return redirect(url_for('index'))
+    return render_template('change_password.html')
 
-        elif 'new_username' in request.form:
-            # Change username functionality
-            new_username = request.form['new_username']
-            user = User.query.filter_by(username=session['username']).first()
-            if user:
-                user.username = new_username
-                db.session.commit()
-                session['username'] = new_username  # Update session with new username
-                flash('Username changed successfully!', 'success')
-                return redirect(url_for('auth.login'))
-            else:
-                flash('User not found or not logged in. Please log in first.', 'danger')
-                
-    return render_template('security.html')
+@app.route('/logout')
+def logout():
+ 
+    
+    return redirect(url_for('index'))
 
-
-
-
-
-
-
-
-
-@app.route('/about_me', methods=['GET', 'POST'])
-def about_me():
-    user = User.query.filter_by(username=session.get('username')).first()
-    if not user:
-        flash('User not found or not logged in.', 'danger')
-        return redirect(url_for('auth.login'))
-
-    if request.method == 'POST':
-        user.bio = request.form['bio']
-        user.email = request.form['email']
-        user.phone = request.form['phone']
-        db.session.commit()
-        flash('Contact information updated successfully!', 'success')
-        return redirect(url_for('about_me'))
-
-    return render_template('about_me.html', user=user, edit_mode=request.args.get('edit', 'false') == 'true')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-if __name__ == '__main__':
+if name == 'main':
     app.run(debug=True)
-
-
+    
