@@ -10,14 +10,14 @@ body {
     justify-content: center;
 }
 
-.login-form {
+.register-form {
     background: white;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
-.login-form button {
+.register-form button {
     width: 100%;
     padding: 10px;
     border-radius: 10px;
@@ -29,27 +29,50 @@ body {
     cursor: pointer;
 }
 
-.login-form h2 {
+.register-form h2 {
     margin-bottom: 20px;
     text-transform: uppercase;
     letter-spacing: 3px;
     color: azure;
 }
 
-.login-form input {
+.input-container {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.input-container input {
     width: 90%;
-    padding: 5px;
+    padding: 10px;
     margin-bottom: 10px;
     border: 1px solid grey;
     border-radius: 5px;
 }
 
-.login-form button:hover {
+.input-container label {
+    position: absolute;
+    top: 0;
+    left: 10px;
+    padding: 10px;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    color: grey;
+}
+
+.input-container input:focus + label,
+.input-container input:not(:placeholder-shown) + label {
+    top: -20px;
+    left: 0;
+    font-size: 12px;
+    color: #333;
+}
+
+.register-form button:hover {
     background-color: darkgray;
 }
 
 @media (max-width: 480px) {
-    .login-form {
+    .register-form {
         width: 80%;
     }
 }

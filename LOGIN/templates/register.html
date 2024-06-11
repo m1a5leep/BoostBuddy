@@ -1,28 +1,26 @@
 <!DOCTYPE html>
-
 <html lang="en">
+    
 <head>
     <meta charset="UTF-8">
-    <meta name="viewpoint" content=""width=device-width, initial-scale="1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
-    <link rel="stylesheet" type="text/css" href="{{ url_for( 'static', filename='login.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/register.css') }}">
 </head>
 
 <body>
-    <div class="wrapper">
-        <form action="{{ url_for( 'auth.register') }}" method="post">
+    <div class="register-form">
+        <form action="{{ url_for('auth.register') }}" method="post">
             <h2>Register Boost Buddy Here!</h2>
-            <div class="login container">
+            <div class="input-container">
                 <input type="text" name="username" required>
                 <label>Enter your username</label>
             </div>
-            <div class="login-container">
+            <div class="input-container">
                 <input type="password" name="password" required>
                 <label>Enter your password</label>
             </div>
-
             <button type="submit">Register</button>
-
         </form>
     </div>
 </body>
