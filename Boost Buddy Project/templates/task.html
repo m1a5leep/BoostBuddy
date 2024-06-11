@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/task.css') }}">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li style="float:right">
+                    <a href="{{ url_for('homepage') }}">
+                        <svg width="24px" height="24px" viewBox="0 0 24 24" stroke-width="1.5" fill="none" xmlns="http://www.w3.org/2000/svg" color="#000000">
+                            <path d="M3 12L21 12M21 12L12.5 3.5M21 12L12.5 20.5" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <h2>Tasks</h2>
+
+    <div class="box">
+        {% for task in tasks %}
+            <div class="taskbox">
+                <span>
+                    <article>
+                        <div class="taskbody">
+                            <div class="taskdetails">
+                                <small class="time">{{ task.task_date.strftime('%Y-%m-%d %H:%M') }}</small>
+                            </div>
+                            <a class="taskname">{{ task.task_name }}</a>
+                            <p class="taskdes">{{ task.task_description }}</p>
+                            {% if task.completion_time %}
+                                <p class="time-spent">Time Spent: 
+                                    {{ (task.completion_time - task.task_date).total_seconds() // 3600 }} hours 
+                                    {{ ((task.completion_time - task.task_date).total_seconds() % 3600) // 60 }} minutes
+                                </p>
+                            {% endif %}
+                        </div>
+                    </article>
+                    <div>
+                        <form action="{{ url_for('delete_task', task_id=task.id) }}" method="post" class="delete-form">
+                            <button type="submit" class="btn-delete">
+                                <svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" color="#000000">
+                                    <path d="M6.75827 17.2426L12.0009 12M17.2435 6.75736L12.0009 12M12.0009 12L6.75827 6.75736M12.0009 12L17.2435 17.2426" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                </svg>
+                            </button>
+                        </form>
+                        <form action="{{ url_for('complete_task', task_id=task.id) }}" method="post" class="complete-form">
+                            <button type="submit" class="btn-complete">
+                                <svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" color="#000000">
+                                    <path d="M5 13L9 17L19 7" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                </svg>
+                            </button>
+                        </form>
+                    </div>
+                </span>
+            </div>
+        {% endfor %}
+    </div>
+
+    <a href="{{ url_for('addtask') }}"><button class="add">+</button></a>
+</body>
+</html>
