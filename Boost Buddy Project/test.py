@@ -5,6 +5,8 @@ import time, schedule, calendar, os
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 
+
+
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
@@ -35,6 +37,9 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
     password = db.Column(db.String(60), nullable=False)
+    bio = db.Column(db.String(100), nullable=True)  
+    email = db.Column(db.String(120), nullable=False, unique=True)  
+    phone = db.Column(db.String(15), nullable=True)
 
     def _repr_(self):
         return f"User('{self.username}')"
@@ -79,6 +84,7 @@ def login():
 
         if user and check_password_hash(user.password, password):
             flash("Login Successful! Welcome back!")
+            session['username'] = username
             return render_template("homepage.html")
         else:
             flash("Invalid username or password! Try Again!")
@@ -145,9 +151,13 @@ def note():
     notes = Note.query.all()
     return render_template('notes.html', notes=notes)
 
+
+
 @app.route('/cancel_note', methods=['GET'])
 def cancel_note():
    return render_template('notes.html')
+
+
 
 @app.route('/delete_note/<int:note_id>', methods=['POST'])
 def delete_note(note_id):
@@ -168,8 +178,6 @@ def create_notes():
     db.session.commit()
     flash('Note created successfully.', 'success')
     return redirect(url_for('note'))
-
-
  
 
 @app.route('/add_note')
@@ -260,42 +268,16 @@ def profile():
     return render_template('profile.html')
 
 
-
-@app.route('/edit_profile', methods=['GET', 'POST'])
+@app.route('/edit_profile')
 def edit_profile():
-    if request.method == 'POST':
-        name = request.form['name']
-        email = request.form['email']
-        bio = request.form['bio']
-
-        
-
-        return redirect(url_for('index'))
     return render_template('edit_profile.html')
 
-@app.route('/change_password', methods=['GET', 'POST'])
-def change_password():
-    if request.method == 'POST':
-        old_password = request.form['old_password']
-        new_password = request.form['new_password']
-        confirm_password = request.form['confirm_password']
-        
-       
-        
-        return redirect(url_for('index'))
-    return render_template('change_password.html')
-
-@app.route('/logout')
-def logout():
- 
-    
-    return redirect(url_for('index'))
 
 @app.route('/security', methods=['GET', 'POST'])
 def security():
     if request.method == 'POST':
         if 'current_password' in request.form and 'new_password' in request.form and 'confirm_password' in request.form:
-            # Change password functionality
+        
             username = session.get('username')
             user = User.query.filter_by(username=username).first()
             if user:
@@ -316,19 +298,22 @@ def security():
                 flash('User not found or not logged in. Please log in first.', 'danger')
 
         elif 'new_username' in request.form:
-            # Change username functionality
+           
             new_username = request.form['new_username']
             user = User.query.filter_by(username=session['username']).first()
             if user:
                 user.username = new_username
                 db.session.commit()
-                session['username'] = new_username  # Update session with new username
+                session['username'] = new_username 
                 flash('Username changed successfully!', 'success')
                 return redirect(url_for('auth.login'))
             else:
                 flash('User not found or not logged in. Please log in first.', 'danger')
                 
     return render_template('security.html')
+
+
+
 
 @app.route('/about_me', methods=['GET', 'POST'])
 def about_me():
@@ -346,6 +331,8 @@ def about_me():
         return redirect(url_for('about_me'))
 
     return render_template('about_me.html', user=user, edit_mode=request.args.get('edit', 'false') == 'true')
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

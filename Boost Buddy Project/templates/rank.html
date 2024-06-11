@@ -24,10 +24,10 @@
     <table border="1">
         <tr>
             <th>Number</th>
-            <th>Task</th>
+            <th>Task Name</th>
             <th>Start Time</th>
             <th>Time Duration</th>
-            <th>Info</th>
+            <th>Task Description</th>
         </tr>
         {% for task, procrastination_level in tasks %}
         <tr>
@@ -35,10 +35,9 @@
             <td>{{ task.task_name }}</td>
             <td>{{ task.task_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
             <td>{{ procrastination_level.days }} days, {{ procrastination_level.seconds // 3600 }} hours, {{ (procrastination_level.seconds // 60) % 60 }} minutes</td>
-            <td>
-                <a href="#task{{ loop.index }}" class="square-button">Info</a>
-                <div id="task{{ loop.index }}" class="task-info">{{ task.task_description }}</div>
-            </td>
+            <td>{{ task.task_description }}</td>
+            
+             
         </tr>
         {% endfor %}
     </table>
