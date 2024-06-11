@@ -1,5 +1,5 @@
 header{
-    padding: 20px;
+    padding: 5px;
     text-align: center;
 }
 
@@ -24,6 +24,12 @@ li a {
 
 h1 {
     font-size: 65px;
+}
+
+h6 {
+    text-align: center;
+    font-size: medium;
+    font-weight: lighter;
 }
 
 body {
