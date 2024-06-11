@@ -231,13 +231,14 @@ def generate_calendar(year, month):
     return month_days, tasks_by_day
 
 @app.route('/calendar')
+@app.route('/calendar', methods=['GET'])
 def calendar_view():
     now = datetime.now()
-    year = now.year
-    month = now.month
+    year = request.args.get('year', default=now.year, type=int)
+    month = request.args.get('month', default=now.month, type=int)
     month_days, tasks_by_day = generate_calendar(year, month)
-    month_name = now.strftime('%B')
-    return render_template('calendar.html', year=year, month=month, month_name=month_name, month_days=month_days, tasks_by_day=tasks_by_day)
+    month_name = datetime(year, month, 1).strftime('%B')
+    return render_template('calendar.html', year=year, month=month, month_name=month_name, month_days=month_days, tasks_by_day=tasks_by_day, datetime=datetime)
 
 @app.route('/rank')
 def rank():

@@ -29,9 +29,12 @@ h1 {
 }
 
 h2 {
-    text-align: center;
     color: #1c1c1c;
     font-weight: bold;
+}
+
+.calendar-header {
+    text-align: center;
 }
 
 body {
