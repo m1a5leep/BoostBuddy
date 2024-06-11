@@ -39,11 +39,10 @@ class User(db.Model):
     password = db.Column(db.String(60), nullable=False)
     bio = db.Column(db.String(100), nullable=True)  
     email = db.Column(db.String(120), nullable=False, unique=True)  
-    phone = db.Column(db.String(15), nullable=True)  
-     
+    phone = db.Column(db.String(15), nullable=True)
 
     def _repr_(self):
-        return f"User('{self.username}''{self.email}''{self.phone}''{self.bio}')"
+        return f"User('{self.username}')"
 
 with app.app_context():
     db.create_all()
@@ -267,15 +266,17 @@ def rank():
 def profile():
     return render_template('profile.html')
 
+
 @app.route('/edit_profile')
 def edit_profile():
     return render_template('edit_profile.html')
+
 
 @app.route('/security', methods=['GET', 'POST'])
 def security():
     if request.method == 'POST':
         if 'current_password' in request.form and 'new_password' in request.form and 'confirm_password' in request.form:
-            # Change password functionality
+        
             username = session.get('username')
             user = User.query.filter_by(username=username).first()
             if user:
@@ -296,19 +297,22 @@ def security():
                 flash('User not found or not logged in. Please log in first.', 'danger')
 
         elif 'new_username' in request.form:
-            # Change username functionality
+           
             new_username = request.form['new_username']
             user = User.query.filter_by(username=session['username']).first()
             if user:
                 user.username = new_username
                 db.session.commit()
-                session['username'] = new_username  # Update session with new username
+                session['username'] = new_username 
                 flash('Username changed successfully!', 'success')
                 return redirect(url_for('auth.login'))
             else:
                 flash('User not found or not logged in. Please log in first.', 'danger')
                 
     return render_template('security.html')
+
+
+
 
 @app.route('/about_me', methods=['GET', 'POST'])
 def about_me():
@@ -328,6 +332,6 @@ def about_me():
     return render_template('about_me.html', user=user, edit_mode=request.args.get('edit', 'false') == 'true')
 
 
+
 if __name__ == '__main__':
     app.run(debug=True)
-
