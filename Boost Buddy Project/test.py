@@ -145,13 +145,9 @@ def note():
     notes = Note.query.all()
     return render_template('notes.html', notes=notes)
 
-
-
 @app.route('/cancel_note', methods=['GET'])
 def cancel_note():
    return render_template('notes.html')
-
-
 
 @app.route('/delete_note/<int:note_id>', methods=['POST'])
 def delete_note(note_id):
@@ -172,6 +168,8 @@ def create_notes():
     db.session.commit()
     flash('Note created successfully.', 'success')
     return redirect(url_for('note'))
+
+
  
 
 @app.route('/add_note')
