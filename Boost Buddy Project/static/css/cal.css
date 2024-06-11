@@ -1,5 +1,5 @@
-header{
-    padding: 20px;
+header {
+    padding: 5px;
     text-align: center;
 }
 
@@ -35,13 +35,27 @@ h2 {
 
 .calendar-header {
     text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.calendar-header form {
+    display: inline-block;
+    margin: 0;
+}
+
+.calendar-header label {
+    margin-right: 5px;
 }
 
 body {
     margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-image: linear-gradient(to right ,white, grey);
-    min-height:100vh;
+    min-height: 100vh;
 }
 
 .nav {
@@ -74,7 +88,7 @@ body {
     border: 1px solid #00000090;
     border-radius: 5px;
     padding: 20px;
-    text-align: left; top: -10;
+    text-align: left;
     font-weight: bold;
 }
 
@@ -83,7 +97,7 @@ body {
 }
 
 .datetext {
-    text-align: absolute; left: 0;
+    text-align: center;
     font-weight: bold;
 }
 
@@ -92,6 +106,10 @@ body {
 }
 
 @media screen and (max-width: 600px) {
+    .calendar-header {
+        flex-direction: column;
+    }
+    
     .column.side, .column.main {
         width: 100%;
     }
