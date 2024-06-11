@@ -4,7 +4,7 @@ import time, schedule, calendar, os
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 
-app = Flask(name)
+app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -40,7 +40,7 @@ class User(db.Model):
 with app.app_context():
     db.create_all()
 
-auth_bp = Blueprint("auth", name)
+auth_bp = Blueprint("auth", __name__)
 
 @auth_bp.route("/register", methods=["GET", "POST"])
 def register():
@@ -143,13 +143,9 @@ def note():
     notes = Note.query.all()
     return render_template('notes.html', notes=notes)
 
-
-
 @app.route('/cancel_note', methods=['GET'])
 def cancel_note():
    return render_template('notes.html')
-
-
 
 @app.route('/delete_note/<int:note_id>', methods=['POST'])
 def delete_note(note_id):
@@ -170,6 +166,8 @@ def create_notes():
     db.session.commit()
     flash('Note created successfully.', 'success')
     return redirect(url_for('note'))
+
+
  
 
 @app.route('/add_note')
@@ -239,6 +237,21 @@ def calendar_view():
     month_name = now.strftime('%B')
     return render_template('calendar.html', year=year, month=month, month_name=month_name, month_days=month_days, tasks_by_day=tasks_by_day)
 
+@app.route('/rank')
+def rank():
+   
+    tasks = Task.query.all()
+
+    sorted_tasks = []
+    for task in tasks:
+        if task.completion_time is not None:
+            procrastination_level = task.completion_time - task.task_date
+            sorted_tasks.append((task, procrastination_level))
+
+    sorted_tasks.sort(key=lambda x: x[1], reverse=True)
+
+    return render_template('rank.html', tasks=sorted_tasks)
+
 @app.route('/profile')
 def profile():
     return render_template('profile.html')
@@ -275,6 +288,6 @@ def logout():
     
     return redirect(url_for('index'))
 
-if name == 'main':
+if __name__ == '__main__':
     app.run(debug=True)
     
