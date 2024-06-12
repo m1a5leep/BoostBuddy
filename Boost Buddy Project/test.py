@@ -43,6 +43,13 @@ class User(db.Model):
 
     def _repr_(self):
         return f"User('{self.username}')"
+    
+class Appointment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    appointment_date = db.Column(db.Date, nullable=False)
+    start_time = db.Column(db.Time, nullable=False)
+    end_time = db.Column(db.Time, nullable=False)
+    description = db.Column(db.String(255), nullable=False)
 
 with app.app_context():
     db.create_all()
@@ -222,7 +229,6 @@ def delete_file():
         flash('Error deleting file.', 'danger')
     return redirect(url_for('document'))
 
-@app.route('/generatecal/<int:year>/<int:month>')
 def generate_calendar(year, month):
     cal = calendar.Calendar(firstweekday=0)
     month_days = cal.monthdayscalendar(year, month)
@@ -238,15 +244,53 @@ def generate_calendar(year, month):
     
     return month_days, tasks_by_day
 
-@app.route('/calendar')
-@app.route('/calendar', methods=['GET'])
+@app.route('/calendar', methods=['GET', 'POST'])
 def calendar_view():
     now = datetime.now()
-    year = request.args.get('year', default=now.year, type=int)
-    month = request.args.get('month', default=now.month, type=int)
+    year = request.args.get('year', now.year, type=int)
+    month = request.args.get('month', now.month, type=int)
+    
+    appointments = Appointment.query.filter(
+        db.extract('year', Appointment.appointment_date) == year,
+        db.extract('month', Appointment.appointment_date) == month
+    ).all()
+    
+    appointments_by_day = {}
+    for appointment in appointments:
+        day = appointment.appointment_date.day
+        if day not in appointments_by_day:
+            appointments_by_day[day] = []
+        appointments_by_day[day].append(appointment)
+    
     month_days, tasks_by_day = generate_calendar(year, month)
     month_name = datetime(year, month, 1).strftime('%B')
-    return render_template('calendar.html', year=year, month=month, month_name=month_name, month_days=month_days, tasks_by_day=tasks_by_day, datetime=datetime)
+    
+    return render_template('calendar.html', year=year, month=month, month_name=month_name, 
+                           month_days=month_days, tasks_by_day=tasks_by_day, 
+                           appointments_by_day=appointments_by_day, datetime=datetime)
+
+@app.route('/schedule_appointment', methods=['POST'])
+def schedule_appointment():
+    appointment_date = request.form['appointment_date']
+    start_time = request.form['start_time']
+    end_time = request.form['end_time']
+    description = request.form['description']
+
+    new_appointment = Appointment(
+        appointment_date=datetime.strptime(appointment_date, '%Y-%m-%d').date(),
+        start_time=datetime.strptime(start_time, '%H:%M').time(),
+        end_time=datetime.strptime(end_time, '%H:%M').time(),
+        description=description
+    )
+    
+    db.session.add(new_appointment)
+    db.session.commit()
+    
+    return redirect(url_for('calendar_view'))
+
+@app.route('/cancel_appoint', methods=['POST'])
+def cancel_appoint():
+   return render_template('calendar.html')
 
 @app.route('/rank')
 def rank():

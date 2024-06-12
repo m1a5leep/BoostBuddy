@@ -65,10 +65,36 @@
                                 {% endfor %}
                             </ul>
                         {% endif %}
+                        {% if day in appointments_by_day %}
+                            <ul>
+                                {% for appointment in appointments_by_day[day] %}
+                                    <li class="tasktitle">{{ appointment.description }} ({{ appointment.start_time.strftime('%H:%M') }} - {{ appointment.end_time.strftime('%H:%M') }})</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
                     </div>
                 {% endif %}
             {% endfor %}
         {% endfor %}
+    </div>
+    
+    <a class="appointb" href="#myModal">Schedule an Appointment!</a>
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <a class="close" href="{{ url_for('cancel_appoint') }}">&times;</a>
+            <h3>Schedule an Appointment</h3>
+            <form method="post" action="{{ url_for('schedule_appointment') }}">
+                <label for="appointment_date">Date:</label>
+                <input type="date" id="appointment_date" name="appointment_date" required>
+                <label for="start_time">Start Time:</label>
+                <input type="time" id="start_time" name="start_time" required>
+                <label for="end_time">End Time:</label>
+                <input type="time" id="end_time" name="end_time" required>
+                <label for="description">Description:</label>
+                <input type="text" id="description" name="description" required>
+                <button type="submit">Schedule</button>
+            </form>
+        </div>
     </div>
 </body>
 </html>
