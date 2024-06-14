@@ -26,6 +26,7 @@ class Task(db.Model):
     task_description = db.Column(db.Text, nullable=False)
     task_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     completion_time = db.Column(db.DateTime, nullable=True)
+    status = db.Column(db.String(50), nullable=False, default='To-Do')
 
 class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -118,8 +119,13 @@ def homepage():
 
 @app.route('/task')
 def task():
-    tasks = Task.query.all()
-    return render_template('task.html', tasks=tasks)
+    status = request.args.get('status', 'all')
+    if status == 'all':
+        tasks = Task.query.all()
+    else:
+        tasks = Task.query.filter_by(status=status).all()
+    return render_template('task.html', tasks=tasks, status=status)
+
 
 @app.route('/delete_task/<int:task_id>', methods=['POST'])
 def delete_task(task_id):
@@ -133,6 +139,7 @@ def delete_task(task_id):
 def complete_task(task_id):
     task = Task.query.get_or_404(task_id)
     task.completion_time = datetime.utcnow()
+    task.status = 'Complete'
     db.session.commit()
     flash('Task marked as complete.', 'success')
     return redirect(url_for('task'))
