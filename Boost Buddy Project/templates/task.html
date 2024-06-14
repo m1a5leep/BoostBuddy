@@ -23,9 +23,20 @@
 
     <h2>Tasks</h2>
 
+    <form method="get" action="{{ url_for('tasks') }}">
+        <select name="status" onchange="this.form.submit()">
+            <option value="all" {% if status == 'all' %}selected{% endif %}>All Tasks</option>
+            <option value="To-Do" {% if status == 'To-Do' %}selected{% endif %}>To-Do</option>
+            <option value="Complete" {% if status == 'Complete' %}selected{% endif %}>Complete</option>
+            <option value="Pending" {% if status == 'Pending' %}selected{% endif %}>Pending</option>
+        </select>
+
+    </form>
+
+
     <div class="box">
         {% for task in tasks %}
-            <div class="taskbox">
+            <div class="taskbox" data-status="{{ task.status }}">
                 <span>
                     <article>
                         <div class="taskbody">
