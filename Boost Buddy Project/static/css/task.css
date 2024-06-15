@@ -56,6 +56,11 @@ h2 {
     min-height: 100vh; 
 }
 
+.stats {
+    display: flex;
+    justify-content: center;
+}
+
 .taskbox {
     position: relative;
     display: inline-block;

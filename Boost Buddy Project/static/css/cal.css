@@ -4,11 +4,10 @@ body {
     background-image: linear-gradient(to right ,#fdf8e1, #fae588);
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
 }
 
 header {
-    padding: 5px;
+    padding: 1px;
 }
 
 ul {

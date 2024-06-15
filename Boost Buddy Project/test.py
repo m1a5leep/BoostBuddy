@@ -317,9 +317,9 @@ def schedule_appointment():
     
     return redirect(url_for('calendar_view'))
 
-@app.route('/cancel_appoint', methods=['POST'])
+@app.route('/cancel_appoint')
 def cancel_appoint():
-   return render_template('calendar.html')
+    return redirect(url_for('calendar_view'))
 
 @app.route('/rank')
 def rank():
