@@ -33,7 +33,7 @@ body {
     margin-bottom: 20px;
     text-transform: uppercase;
     letter-spacing: 3px;
-    color: azure;
+    color: rgb(12, 13, 13);
 }
 
 .login-form input {
