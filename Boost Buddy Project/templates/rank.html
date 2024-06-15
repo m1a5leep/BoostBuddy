@@ -34,7 +34,7 @@
             <td>{{ loop.index }}</td>
             <td>{{ task.task_name }}</td>
             <td>{{ task.task_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-            <td>{{ procrastination_level.days }} days, {{ procrastination_level.seconds // 3600 }} hours, {{ (procrastination_level.seconds // 60) % 60 }} minutes</td>
+            <td>{{ procrastination_level.days }} days, {{ procrastination_level.seconds // 3600 }} hours, {{ (procrastination_level.seconds % 60) // 60 }} minutes</td>
             <td>{{ task.task_description }}</td>
             
              

@@ -136,6 +136,7 @@ def delete_task(task_id):
 def complete_task(task_id):
     task = Task.query.get_or_404(task_id)
     task.completion_time = datetime.utcnow()
+    task.time_taken = task.completion_time - task.task_date
     db.session.commit()
     flash('Task marked as complete.', 'success')
     return redirect(url_for('task'))
