@@ -33,7 +33,7 @@ body {
     margin-bottom: 20px;
     text-transform: uppercase;
     letter-spacing: 3px;
-    color: azure;
+    color: rgb(0, 0, 0);
 }
 
 .input-container {
