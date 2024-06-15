@@ -63,16 +63,13 @@ def register():
         username = request.form["username"]
         password = request.form["password"]
 
-        # checking if user already exists
         user = User.query.filter_by(username=username).first()
         if user:
             flash("Username already exists! Please choose a different username.")
             return redirect(url_for("auth.register"))
 
-        #hash cover password
         hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
 
-        #creating new user and add to database
         new_user = User(username=username, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
