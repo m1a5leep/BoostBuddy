@@ -44,7 +44,7 @@ body {
     margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-weight: bold;
-    background-image: linear-gradient(to right ,white, grey);
+    background-image: linear-gradient(to right ,rgb(48, 156, 129), rgb(205, 218, 218));
     min-height: 100vh;
 }
 
@@ -66,11 +66,11 @@ h2 {
     position: relative;
     display: inline-block;
     width: calc(30% - 20px);
-    border: none;
+    border: 1px solid #0a0a0a;
     border-radius: 35px;
     padding: 10px;
     margin: 5px;
-    background-color: #ccc;
+    background-color: #dbe5e7;
     box-sizing: border-box;
     word-wrap: break-word;
 }
@@ -78,7 +78,8 @@ h2 {
 .addform {
     max-width: 400px;
     margin: 0 auto;
-    background: #f9f9f9;
+    background: #047d6f;
+    border: 1px solid #0a0a0a;
     padding: 20px;
     border-radius: 25px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -102,7 +103,7 @@ h2 {
 
 .btn-delete:hover{
 
-    color: rgb(249, 255, 144);
+    color: rgba(90, 126, 113, 0.973);
 }
 
 input[type="text"],
@@ -113,23 +114,23 @@ input[type="cancel"] {
     width: 100%;
     padding: 8px;
     margin-bottom: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #030303;
     border-radius: 4px;
     box-sizing: border-box;
 }
 
 input[type="submit"],
 input[type="cancel"] {
-    background-color: gray;
+    background-color: rgb(3, 62, 47);
+    border: 1px solid #030303;
     color: white;
-    border: none;
     cursor: pointer;
     text-align: center;
 }
 
 input[type="submit"]:hover,
 input[type="cancel"]:hover {
-    background-color: #eaeaa1;
+    background-color: #b2b29f;
 }
 
 @media screen and (max-width: 600px) {
