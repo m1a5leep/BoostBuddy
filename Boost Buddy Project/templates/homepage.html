@@ -18,13 +18,14 @@
         </nav>
         <h1>@Welcome to Boost Buddy!!</h1>
     </header>
+    <h6>Tasking Your Productivity to the Next Level!</h6>
     <section class="row">
         <section class="column main">
             <button onclick="window.location.href='/calendar'" class="nav" type="button" style="padding: 200px 135px; font-size: 65px; margin: 30px 180px;">Calendar</button>
         </section>
         <section class="column side">
             <div><a href="{{ url_for('task') }}"><button class="nav" type="button">Tasks</button></a></div>
-            <div><a href=""><button class="nav" type="button">Ranks</button></a></div>
+            <div><a href="{{ url_for('rank') }}"><button class="nav" type="button">Ranks</button></a></div>
             <div><a href="{{ url_for('note') }}"><button class="nav" type="button">Notes</button></a></div>
         </section>
     </section>

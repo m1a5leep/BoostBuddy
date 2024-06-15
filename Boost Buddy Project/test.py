@@ -26,7 +26,7 @@ class Task(db.Model):
     task_description = db.Column(db.Text, nullable=False)
     task_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     completion_time = db.Column(db.DateTime, nullable=True)
-
+    
 class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
@@ -39,11 +39,17 @@ class User(db.Model):
     password = db.Column(db.String(60), nullable=False)
     bio = db.Column(db.String(100), nullable=True)  
     email = db.Column(db.String(120), nullable=False, unique=True)  
-    phone = db.Column(db.String(15), nullable=True)  
-     
+    phone = db.Column(db.String(15), nullable=True)
 
     def _repr_(self):
-        return f"User('{self.username}''{self.email}''{self.phone}''{self.bio}')"
+        return f"User('{self.username}')"
+    
+class Appointment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    appointment_date = db.Column(db.Date, nullable=False)
+    start_time = db.Column(db.Time, nullable=False)
+    end_time = db.Column(db.Time, nullable=False)
+    description = db.Column(db.String(255), nullable=False)
 
 with app.app_context():
     db.create_all()
@@ -114,6 +120,7 @@ def homepage():
 def task():
     tasks = Task.query.all()
     return render_template('task.html', tasks=tasks)
+
 
 @app.route('/delete_task/<int:task_id>', methods=['POST'])
 def delete_task(task_id):
@@ -223,7 +230,6 @@ def delete_file():
         flash('Error deleting file.', 'danger')
     return redirect(url_for('document'))
 
-@app.route('/generatecal/<int:year>/<int:month>')
 def generate_calendar(year, month):
     cal = calendar.Calendar(firstweekday=0)
     month_days = cal.monthdayscalendar(year, month)
@@ -239,28 +245,84 @@ def generate_calendar(year, month):
     
     return month_days, tasks_by_day
 
-@app.route('/calendar')
+@app.route('/calendar', methods=['GET', 'POST'])
 def calendar_view():
     now = datetime.now()
-    year = now.year
-    month = now.month
+    year = request.args.get('year', now.year, type=int)
+    month = request.args.get('month', now.month, type=int)
+    
+    appointments = Appointment.query.filter(
+        db.extract('year', Appointment.appointment_date) == year,
+        db.extract('month', Appointment.appointment_date) == month
+    ).all()
+    
+    appointments_by_day = {}
+    for appointment in appointments:
+        day = appointment.appointment_date.day
+        if day not in appointments_by_day:
+            appointments_by_day[day] = []
+        appointments_by_day[day].append(appointment)
+    
     month_days, tasks_by_day = generate_calendar(year, month)
-    month_name = now.strftime('%B')
-    return render_template('calendar.html', year=year, month=month, month_name=month_name, month_days=month_days, tasks_by_day=tasks_by_day)
+    month_name = datetime(year, month, 1).strftime('%B')
+    
+    return render_template('calendar.html', year=year, month=month, month_name=month_name, 
+                           month_days=month_days, tasks_by_day=tasks_by_day, 
+                           appointments_by_day=appointments_by_day, datetime=datetime)
+
+@app.route('/schedule_appointment', methods=['POST'])
+def schedule_appointment():
+    appointment_date = request.form['appointment_date']
+    start_time = request.form['start_time']
+    end_time = request.form['end_time']
+    description = request.form['description']
+
+    new_appointment = Appointment(
+        appointment_date=datetime.strptime(appointment_date, '%Y-%m-%d').date(),
+        start_time=datetime.strptime(start_time, '%H:%M').time(),
+        end_time=datetime.strptime(end_time, '%H:%M').time(),
+        description=description
+    )
+    
+    db.session.add(new_appointment)
+    db.session.commit()
+    
+    return redirect(url_for('calendar_view'))
+
+@app.route('/cancel_appoint', methods=['POST'])
+def cancel_appoint():
+   return render_template('calendar.html')
+
+@app.route('/rank')
+def rank():
+   
+    tasks = Task.query.all()
+
+    sorted_tasks = []
+    for task in tasks:
+        if task.completion_time is not None:
+            procrastination_level = task.completion_time - task.task_date
+            sorted_tasks.append((task, procrastination_level))
+
+    sorted_tasks.sort(key=lambda x: x[1], reverse=True)
+
+    return render_template('rank.html', tasks=sorted_tasks)
 
 @app.route('/profile')
 def profile():
     return render_template('profile.html')
 
+
 @app.route('/edit_profile')
 def edit_profile():
     return render_template('edit_profile.html')
+
 
 @app.route('/security', methods=['GET', 'POST'])
 def security():
     if request.method == 'POST':
         if 'current_password' in request.form and 'new_password' in request.form and 'confirm_password' in request.form:
-            # Change password functionality
+        
             username = session.get('username')
             user = User.query.filter_by(username=username).first()
             if user:
@@ -281,24 +343,19 @@ def security():
                 flash('User not found or not logged in. Please log in first.', 'danger')
 
         elif 'new_username' in request.form:
-            # Change username functionality
+           
             new_username = request.form['new_username']
             user = User.query.filter_by(username=session['username']).first()
             if user:
                 user.username = new_username
                 db.session.commit()
-                session['username'] = new_username  # Update session with new username
+                session['username'] = new_username 
                 flash('Username changed successfully!', 'success')
                 return redirect(url_for('auth.login'))
             else:
                 flash('User not found or not logged in. Please log in first.', 'danger')
                 
     return render_template('security.html')
-
-
-
-
-
 
 
 
@@ -322,19 +379,5 @@ def about_me():
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 if __name__ == '__main__':
     app.run(debug=True)
-
-
