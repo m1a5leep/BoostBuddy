@@ -154,13 +154,6 @@ input[type="cancel"]:hover {
     background-color: #eaeaa1;
 }
 
-form select {
-    padding: 8px;
-    margin-bottom: 20px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-}
 
 @media screen and (max-width: 600px) {
     .column.side, .column.main {
