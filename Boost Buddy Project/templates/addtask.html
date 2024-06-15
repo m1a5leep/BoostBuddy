@@ -18,6 +18,13 @@
         <label for="task_date">Task Date:</label>
         <input type="datetime-local" id="task_date" name="task_date" required>
         <br>
+        <label for="status">Status:</label>
+        <select id="status" name="status">
+            <option value="pending">Pending</option>
+            <option value="in-progress">In Progress</option>
+            <option value="completed">Completed</option>
+        </select>
+        <br>
         <button class="addtask" type="submit">Add Task</button>
     </form>
 </body>

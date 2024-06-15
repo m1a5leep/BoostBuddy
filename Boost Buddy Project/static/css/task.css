@@ -89,6 +89,13 @@ h2 {
     font-size: 15px;
 }
 
+.status {
+    display: block;
+    color: rgb(98, 98, 98);
+    font-size: 15px;
+    margin-top: 5px;
+}
+
 .addform {
     max-width: 400px;
     margin: 0 auto;
