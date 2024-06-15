@@ -1,5 +1,5 @@
 header{
-    padding: 5px;
+    padding: 2px;
     text-align: center;
 }
 
@@ -55,7 +55,43 @@ body {
     font-weight: 100;
     font-size: 45px;
     padding: 25px 120px;
-    background-image: linear-gradient(to right, grey, white);
+    background-image: linear-gradient(to right, #fdf8e1, #fae588);
+    border-radius: 55px;
+    margin: 36px 5px;
+    cursor: pointer;
+}
+
+.nav1 {
+    border-style: none;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-weight: 100;
+    font-size: 45px;
+    padding: 25px 120px;
+    background-image: linear-gradient(to left,#efefef,#72ddf7);
+    border-radius: 55px;
+    margin: 36px 5px;
+    cursor: pointer;
+}
+
+.nav2 {
+    border-style: none;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-weight: 100;
+    font-size: 45px;
+    padding: 25px 120px;
+    background-image: linear-gradient(to right, rgb(48, 156, 129), rgb(205, 218, 218));
+    border-radius: 55px;
+    margin: 36px 5px;
+    cursor: pointer;
+}
+
+.nav3 {
+    border-style: none;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-weight: 100;
+    font-size: 45px;
+    padding: 25px 120px;
+    background-image: linear-gradient(to right, rgb(243, 207, 206), rgb(243, 207, 206));
     border-radius: 55px;
     margin: 36px 5px;
     cursor: pointer;
