@@ -31,7 +31,7 @@ body {
     margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-weight: bold;
-    background-image: linear-gradient(to right ,white, grey);
+    background-image: linear-gradient(to right ,#fcf3b9, #fbca9a);
     min-height:100vh;
     box-sizing: border-box;
 }
@@ -52,7 +52,7 @@ form {
 
 button {
     font-size: 16px;
-    background-color: grey;
+    background-color: #fcb274;
     color: white;
     border: none;
     cursor: pointer;
@@ -74,7 +74,7 @@ button:hover {
 }
 
 .list {
-    background-color: white;
+    background-color: #fcf3b9;
     margin: 10px 0;
     padding: 10px;
     display: flex;
