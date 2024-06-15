@@ -154,6 +154,7 @@ input[type="cancel"]:hover {
     background-color: #eaeaa1;
 }
 
+
 @media screen and (max-width: 600px) {
     .column.side, .column.main {
         width: 100%;

@@ -26,7 +26,7 @@ class Task(db.Model):
     task_description = db.Column(db.Text, nullable=False)
     task_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     completion_time = db.Column(db.DateTime, nullable=True)
-
+    
 class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
@@ -120,6 +120,7 @@ def homepage():
 def task():
     tasks = Task.query.all()
     return render_template('task.html', tasks=tasks)
+
 
 @app.route('/delete_task/<int:task_id>', methods=['POST'])
 def delete_task(task_id):
