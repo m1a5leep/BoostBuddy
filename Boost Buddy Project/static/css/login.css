@@ -3,7 +3,6 @@ body {
     padding: 0;
     font-family: Arial, Helvetica, sans-serif;
     background: linear-gradient(to bottom right, #ffffff, grey);
-    
     background-size: cover;
     height: 100vh;
     display: flex;
@@ -11,11 +10,18 @@ body {
     justify-content: center;
 }
 
+.login-form {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
 .login-form button {
     width: 100%;
     padding: 10px;
     border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba( 0, 0, 0, 0.5);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
     text-align: center;
     background-color: grey;
     color: #fff;
@@ -27,7 +33,7 @@ body {
     margin-bottom: 20px;
     text-transform: uppercase;
     letter-spacing: 3px;
-    color:azure
+    color: azure;
 }
 
 .login-form input {
@@ -47,5 +53,3 @@ body {
         width: 80%;
     }
 }
-
-

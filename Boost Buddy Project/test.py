@@ -26,6 +26,7 @@ class Task(db.Model):
     task_description = db.Column(db.Text, nullable=False)
     task_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     completion_time = db.Column(db.DateTime, nullable=True)
+    status = db.Column(db.String(50), nullable=False, default='To-Do')
 
 class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -43,6 +44,13 @@ class User(db.Model):
 
     def _repr_(self):
         return f"User('{self.username}')"
+    
+class Appointment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    appointment_date = db.Column(db.Date, nullable=False)
+    start_time = db.Column(db.Time, nullable=False)
+    end_time = db.Column(db.Time, nullable=False)
+    description = db.Column(db.String(255), nullable=False)
 
 with app.app_context():
     db.create_all()
@@ -111,8 +119,13 @@ def homepage():
 
 @app.route('/task')
 def task():
-    tasks = Task.query.all()
-    return render_template('task.html', tasks=tasks)
+    status = request.args.get('status', 'all')
+    if status == 'all':
+        tasks = Task.query.all()
+    else:
+        tasks = Task.query.filter_by(status=status).all()
+    return render_template('task.html', tasks=tasks, status=status)
+
 
 @app.route('/delete_task/<int:task_id>', methods=['POST'])
 def delete_task(task_id):
@@ -126,6 +139,7 @@ def delete_task(task_id):
 def complete_task(task_id):
     task = Task.query.get_or_404(task_id)
     task.completion_time = datetime.utcnow()
+    task.status = 'Complete'
     db.session.commit()
     flash('Task marked as complete.', 'success')
     return redirect(url_for('task'))
@@ -222,7 +236,6 @@ def delete_file():
         flash('Error deleting file.', 'danger')
     return redirect(url_for('document'))
 
-@app.route('/generatecal/<int:year>/<int:month>')
 def generate_calendar(year, month):
     cal = calendar.Calendar(firstweekday=0)
     month_days = cal.monthdayscalendar(year, month)
@@ -238,14 +251,53 @@ def generate_calendar(year, month):
     
     return month_days, tasks_by_day
 
-@app.route('/calendar')
+@app.route('/calendar', methods=['GET', 'POST'])
 def calendar_view():
     now = datetime.now()
-    year = now.year
-    month = now.month
+    year = request.args.get('year', now.year, type=int)
+    month = request.args.get('month', now.month, type=int)
+    
+    appointments = Appointment.query.filter(
+        db.extract('year', Appointment.appointment_date) == year,
+        db.extract('month', Appointment.appointment_date) == month
+    ).all()
+    
+    appointments_by_day = {}
+    for appointment in appointments:
+        day = appointment.appointment_date.day
+        if day not in appointments_by_day:
+            appointments_by_day[day] = []
+        appointments_by_day[day].append(appointment)
+    
     month_days, tasks_by_day = generate_calendar(year, month)
-    month_name = now.strftime('%B')
-    return render_template('calendar.html', year=year, month=month, month_name=month_name, month_days=month_days, tasks_by_day=tasks_by_day)
+    month_name = datetime(year, month, 1).strftime('%B')
+    
+    return render_template('calendar.html', year=year, month=month, month_name=month_name, 
+                           month_days=month_days, tasks_by_day=tasks_by_day, 
+                           appointments_by_day=appointments_by_day, datetime=datetime)
+
+@app.route('/schedule_appointment', methods=['POST'])
+def schedule_appointment():
+    appointment_date = request.form['appointment_date']
+    start_time = request.form['start_time']
+    end_time = request.form['end_time']
+    description = request.form['description']
+
+    new_appointment = Appointment(
+        appointment_date=datetime.strptime(appointment_date, '%Y-%m-%d').date(),
+        start_time=datetime.strptime(start_time, '%H:%M').time(),
+        end_time=datetime.strptime(end_time, '%H:%M').time(),
+        description=description
+    )
+    
+    db.session.add(new_appointment)
+    db.session.commit()
+    
+    return redirect(url_for('calendar_view'))
+
+@app.route('/cancel_appoint', methods=['POST'])
+def cancel_appoint():
+   return render_template('calendar.html')
 
 @app.route('/rank')
 def rank():

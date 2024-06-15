@@ -22,7 +22,27 @@
         </nav>
     </header>
     <h1>Calendar</h1>
-    <h2>{{ month_name }} {{ year }}</h2>
+    <div class="calendar-header">
+        <h2>{{ month_name }} {{ year }}</h2>
+        <form id="monthForm" method="get" action="{{ url_for('calendar_view') }}">
+            <input type="hidden" name="year" value="{{ year }}">
+            <label for="month">Month:</label>
+            <select name="month" id="month" onchange="this.form.submit()">
+                {% for m in range(1, 13) %}
+                    <option value="{{ m }}" {% if m == month %}selected{% endif %}>{{ datetime(year, m, 1).strftime('%B') }}</option>
+                {% endfor %}
+            </select>
+        </form>
+        <form id="yearForm" method="get" action="{{ url_for('calendar_view') }}">
+            <input type="hidden" name="month" value="{{ month }}">
+            <label for="year">Year:</label>
+            <select name="year" id="year" onchange="this.form.submit()">
+                {% for y in range(year - 5, year + 6) %}
+                    <option value="{{ y }}" {% if y == year %}selected{% endif %}>{{ y }}</option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
     <div class="calendar">
         <div class="datetext">Sun</div>
         <div class="datetext">Mon</div>
@@ -45,10 +65,36 @@
                                 {% endfor %}
                             </ul>
                         {% endif %}
+                        {% if day in appointments_by_day %}
+                            <ul>
+                                {% for appointment in appointments_by_day[day] %}
+                                    <li class="tasktitle">{{ appointment.description }} ({{ appointment.start_time.strftime('%H:%M') }} - {{ appointment.end_time.strftime('%H:%M') }})</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
                     </div>
                 {% endif %}
             {% endfor %}
         {% endfor %}
+    </div>
+    
+    <a class="appointb" href="#myModal">Schedule an Appointment!</a>
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <a class="close" href="{{ url_for('cancel_appoint') }}">&times;</a>
+            <h3>Schedule an Appointment</h3>
+            <form method="post" action="{{ url_for('schedule_appointment') }}">
+                <label for="appointment_date">Date:</label>
+                <input type="date" id="appointment_date" name="appointment_date" required>
+                <label for="start_time">Start Time:</label>
+                <input type="time" id="start_time" name="start_time" required>
+                <label for="end_time">End Time:</label>
+                <input type="time" id="end_time" name="end_time" required>
+                <label for="description">Description:</label>
+                <input type="text" id="description" name="description" required>
+                <button type="submit">Schedule</button>
+            </form>
+        </div>
     </div>
 </body>
 </html>
