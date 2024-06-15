@@ -23,14 +23,13 @@
 
     <h2>Tasks</h2>
 
-    <form method="get" action="{{ url_for('tasks') }}">
+    <form method="get" action="{{ url_for('task') }}">
         <select name="status" onchange="this.form.submit()">
             <option value="all" {% if status == 'all' %}selected{% endif %}>All Tasks</option>
-            <option value="To-Do" {% if status == 'To-Do' %}selected{% endif %}>To-Do</option>
-            <option value="Complete" {% if status == 'Complete' %}selected{% endif %}>Complete</option>
-            <option value="Pending" {% if status == 'Pending' %}selected{% endif %}>Pending</option>
+            <option value="pending" {% if status == 'pending' %}selected{% endif %}>Pending</option>
+            <option value="in-progress" {% if status == 'in-progress' %}selected{% endif %}>In Progress</option>
+            <option value="completed" {% if status == 'completed' %}selected{% endif %}>Completed</option>
         </select>
-
     </form>
 
 

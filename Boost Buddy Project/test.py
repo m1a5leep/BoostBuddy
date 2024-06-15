@@ -26,7 +26,7 @@ class Task(db.Model):
     task_description = db.Column(db.Text, nullable=False)
     task_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     completion_time = db.Column(db.DateTime, nullable=True)
-    status = db.Column(db.String(50), nullable=False, default='To-Do')
+    status = db.Column(db.String(20), nullable=False, default='Pending')
 
 class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -141,8 +141,9 @@ def create_task():
     task_name = request.form['task_name']
     task_description = request.form['task_description']
     task_date = request.form['task_date']
+    status = request.form['status']
     task_date = datetime.strptime(task_date, '%Y-%m-%dT%H:%M')
-    new_task = Task(task_name=task_name, task_description=task_description, task_date=task_date)
+    new_task = Task(task_name=task_name, task_description=task_description, task_date=task_date, status=status)
     db.session.add(new_task)
     db.session.commit()
     flash('Task created successfully.', 'success')
@@ -151,6 +152,16 @@ def create_task():
 @app.route('/addtask')
 def addtask():
     return render_template('addtask.html')
+
+@app.route('/update_task_status/<int:task_id>', methods=['POST'])
+def update_task_status(task_id):
+    task = Task.query.get_or_404(task_id)
+    new_status = request.form['status']
+    task.status = new_status
+    db.session.commit()
+    flash('Task status updated successfully.', 'success')
+    return redirect(url_for('task'))
+
 
 @app.route('/note')
 def note():
