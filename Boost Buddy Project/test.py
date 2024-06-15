@@ -2,8 +2,9 @@ from flask import Flask, redirect, url_for, render_template, request, flash, sen
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 import time, schedule, calendar, os
-from datetime import datetime
+from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
+import threading
 
 
 
@@ -44,6 +45,14 @@ class User(db.Model):
 
     def _repr_(self):
         return f"User('{self.username}')"
+    
+class Notification(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    message = db.Column(db.String(200), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    read = db.Column(db.Boolean, default=False)
+
 
 with app.app_context():
     db.create_all()
@@ -108,6 +117,13 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 
 @app.route('/homepage')
 def homepage():
+    user = User.query.filter_by(username=session.get('username')).first()
+    if user:
+        notifications = Notification.query.filter_by(user_id=user.id, read=False).all()
+        for notification in notifications:
+            flash(notification.message, 'info')
+            notification.read = True  
+        db.session.commit()
     return render_template('homepage.html')
 
 @app.route('/task')
@@ -149,8 +165,23 @@ def create_task():
     flash('Task created successfully.', 'success')
     return redirect(url_for('task'))
 
-@app.route('/addtask')
+@app.route('/addtask', methods=['GET', 'POST'])
 def addtask():
+    if request.method == 'POST':
+        task_name = request.form['task_name']
+        task_description = request.form['task_description']
+        task_date = datetime.strptime(request.form['task_date'], '%Y-%m-%dT%H:%M')
+        status = request.form['status']
+        user = User.query.filter_by(username=session['username']).first()
+
+        new_task = Task(task_name=task_name, task_description=task_description,
+                        task_date=task_date, status=status, owner=user)
+        db.session.add(new_task)
+        db.session.commit()
+
+        return redirect(url_for('index'))
+    
+    return render_template('addtask.html')
     return render_template('addtask.html')
 
 @app.route('/update_task_status/<int:task_id>', methods=['POST'])
@@ -348,6 +379,32 @@ def about_me():
         return redirect(url_for('about_me'))
 
     return render_template('about_me.html', user=user, edit_mode=request.args.get('edit', 'false') == 'true')
+
+@app.route('/notifications')
+def notifications():
+    return render_template('notifications.html')
+
+def check_due_tasks():
+    with app.app_context():
+        now = datetime.utcnow()
+        upcoming_tasks = Task.query.filter(Task.task_date > now, Task.task_date <= now + timedelta(hours=1)).all()
+        for task in upcoming_tasks:
+            user = User.query.filter_by(username=session['username']).first() 
+            if user:
+                message = f"Hey, your task '{task.task_name}' is due soon."
+                notification = Notification(user_id=user.id, message=message)
+                db.session.add(notification)
+                db.session.commit()
+
+schedule.every(30).minutes.do(check_due_tasks)
+
+def run_scheduler():
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
+scheduler_thread = threading.Thread(target=run_scheduler)
+scheduler_thread.start()
 
 
 
