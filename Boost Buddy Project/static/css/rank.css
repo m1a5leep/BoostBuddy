@@ -2,13 +2,13 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-image: linear-gradient(to right, white, grey);
+    background-image: linear-gradient(to right, rgb(252, 178, 116), rgb(235, 203, 178));
 }
 
 h1 {
     font-size: 50px;
     text-align: center;
-    margin-top: 20px; /* Adjust margin-top value */
+    margin-top: 20px; 
     margin-bottom: 50px;
 }
 
@@ -20,25 +20,25 @@ table {
 }
 
 th, td {
-    border: 1px solid #ddd;
+    border: 1px solid #090909;
     padding: 8px;
     text-align: left;
 }
 
 th {
-    background-color: #868181;
+    background-color: #fd9a4d;
 }
 
 tr:nth-child(even) {
-    background-color: #f2f2f2; /* Set background color for even rows to light gray */
+    background-color: #fcf3b9; 
 }
 
 tr:nth-child(odd) {
-    background-color: white; /* Set background color for odd rows to white */
+    background-color: #fcf3b9; 
 }
 
 tr:hover {
-    background-color: #e0e0e0; /* Change background color on hover */
+    background-color: #fcf3b9; 
 }
 
 .task-info {
@@ -47,15 +47,6 @@ tr:hover {
 
 .task-info:target {
     display: block;
-}
-
-.square-button {
-    display: inline-block;
-    padding: 5px 10px;
-    background-color: #042d59; /* Blue background color */
-    color: white;
-    text-align: center;
-    text-decoration: none;
 }
 
 li {
