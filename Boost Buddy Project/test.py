@@ -120,8 +120,12 @@ def homepage():
 
 @app.route('/task')
 def task():
-    tasks = Task.query.all()
-    return render_template('task.html', tasks=tasks)
+    status = request.args.get('status', 'all')
+    if status == 'all':
+        tasks = Task.query.all()
+    else:
+        tasks = Task.query.filter_by(status=status).all()
+    return render_template('task.html', tasks=tasks, status=status)
 
 
 @app.route('/delete_task/<int:task_id>', methods=['POST'])
