@@ -25,16 +25,15 @@
         <tr>
             <th>Number</th>
             <th>Task Name</th>
-            <th>Start Time</th>
-            <th>Time Duration</th>
+            <th>Time Spent</th>
             <th>Task Description</th>
         </tr>
         {% for task, procrastination_level in tasks %}
         <tr>
             <td>{{ loop.index }}</td>
             <td>{{ task.task_name }}</td>
-            <td>{{ task.task_date.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-            <td>{{ procrastination_level.days }} days, {{ procrastination_level.seconds // 3600 }} hours, {{ (procrastination_level.seconds % 60) // 60 }} minutes</td>
+            <td>{{ (task.completion_time - task.task_date).total_seconds() // 3600 }} hours 
+                {{ ((task.completion_time - task.task_date).total_seconds() % 3600) // 60 }} minutes</td>
             <td>{{ task.task_description }}</td>
             
              
