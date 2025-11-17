@@ -1,2 +1,1 @@
-This is where we put our website link:
-http://boostbuddy.pythonanywhere.com/
+The website link expired so it was not oprn in public for now.
